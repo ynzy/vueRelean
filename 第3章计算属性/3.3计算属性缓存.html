@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>3.3计算属性缓存</title>
+</head>
+<body>
+  <div id="app">
+    {{reversedText}},
+    {{reversedText2}},
+    {{now}}
+  </div>
+
+</body>
+<script src="../vue.js"></script>
+<script>
+  Vue.config.devtools=false;
+	Vue.config.productionTip=false;
+/*computed和methods的不同
+
+计算属性是基于它的依赖缓存的，
+一个计算属性所依赖的数据发生变化时，它才会重新取值，
+所以，text只要不改变，计算属性也就不更新
+*/
+
+ var app = new Vue({
+    el: '#app',
+    data: {
+      text: '123,456',
+    },
+    computed: {
+      reversedText() {
+        return this.text.split(',').reverse().join(',');
+      },
+      now() {
+        return Date.now();
+      }
+    },
+    methods: {
+      reversedText2() {
+        return this.text.split(',').reverse().join(',');
+      }
+    }
+  })
+
+</script>
+</html>

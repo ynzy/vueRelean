@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>2.1.2 vue的生命周期</title>
+</head>
+<body>
+  <div id="app">
+    {{msg}}
+    <button @click="updateData">更新数据</button>
+    <button @click="destroy">销毁组件</button>
+  </div>
+</body>
+<script src="../vue.js"></script>
+<script>
+  Vue.config.devtools=false;
+	Vue.config.productionTip=false;
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      msg: 'vue中的原始数据'
+    },
+    methods: {
+      updateData() {
+        this.msg = "数据进行跟新了"
+      },
+      destroy() {
+        app.$destroy();
+      }
+    },
+    beforeCreate () {
+      console.log('组件实例刚刚创建，还未进行数据监测和事件配置')
+    },
+    created () { //常用
+      console.log('实例已经创建完成，并且进行数据监测和事件配置')
+    },
+    beforeMount () {
+      console.log('模板编译之前，没有挂载')
+    },
+    mounted () {  //常用
+      console.log('模板编译完成，挂载完毕，此时才会渲染页面，才能看到页面上数据的展示')
+    },
+    beforeUpdate () {
+      console.log('组件更新之前')
+    },
+    updated () {
+      console.log('组件更新之后')
+    },
+    beforeDestroy () {
+      alert('组件销毁之前')
+    },
+    destroyed () {
+      console.log('组件销毁之后')
+    }
+  })
+  
+</script>
+</html>

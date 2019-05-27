@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>2.1.3插值与表达式(模板语法)</title>
+</head>
+<body>
+  <div id="app">
+    {{date}}
+    <!-- 想输出html，而不是将数据解析后的纯文本，可以使用v-html -->
+    <span v-html="link"></span>
+    <!-- 想输出{{}}，而不是进行替换，使用v-pre -->
+    <div v-pre>{{这里的内容不会被编译}}</div>
+    <!-- 在{{}}中，除了绑定属性值，还可以进行简单的运算，三元运算， -->
+    <!-- vue只支持单个表达式，不支持语句和流控制，表达式中不能使用用户自定义的全局变量，
+      只能使用vue白名单内的全局变量，例如Math和Date -->
+    <div>{{number/10}}</div>
+    <div>{{isok? 'ok' : 'no'}}</div>
+    <div>{{text.split(',').reverse().join(',')}}</div>
+    <div>{{new Date()}}</div>
+  </div>
+</body>
+<script src="../vue.js"></script>
+<script>
+  Vue.config.devtools=false;
+	Vue.config.productionTip=false;
+  //使用{{}}  Mustache语法是最基本的文本插值方法，
+  //他会自动将我们双向绑定的数据实时显示出来
+  var app = new Vue({
+    el: '#app',
+    data: {
+      date: new Date(),
+      link: '<a href="#0">这是一个链接</a>',
+      number: 100,
+      isok: false,
+      text: '123,456'    
+    },
+    mounted () {
+      this.timer = setInterval(() => {
+        this.date = new Date()
+      }, 1000);
+    },
+    beforeDestroy () {
+      if(this.timer) {
+        clearInterval(this.timer)
+      }
+    }
+  })
+
+</script>
+</html>

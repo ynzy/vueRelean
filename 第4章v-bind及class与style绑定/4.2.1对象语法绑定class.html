@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>4.2绑定class的几种方式</title>
+</head>
+<style>
+  .active {
+    height: 50px;
+    width: 50px;
+    background: red;
+  }
+  .static {
+    border: 2px solid;
+  }
+  .error {
+    margin: 0 auto;
+  }
+  .text-fail {
+    color: #fff;
+  }
+</style>
+<body>
+  <div id="app">
+    <!-- 4.2.1对象语法，
+      给：class设置一个对象，可以动态的切换class
+      对象也可以传入多个属性，来动态切换class。
+      :class可以与普通class共存
+    -->
+    <div class="static" :class="{'active':isActive, 'error': isError}"></div>
+    <!-- 一般当clss条件多于两个时，都可以使用data和computed -->
+    <div :class="classes">一段文字</div><span>{{typeiserror}}</span>
+    <div :class=objClass>lingyiduanwenzi</div>
+  </div>
+
+</body>
+<script src="../vue.js"></script>
+<script>
+  Vue.config.devtools=false;
+	Vue.config.productionTip=false;
+/*
+  v-bind的主要作用是动态更新HTML元素上的属性
+*/
+
+ var app = new Vue({
+    el: '#app',
+    data: {
+      isActive: true,
+      isError: true,
+      objClass: {
+        'text-fail': true,
+        active: true,
+        'error': true
+      }
+    },
+    computed: {
+      classes() {
+        return {
+          active: this.isActive && this.isError,
+          'text-fail': this.isError 
+        }
+      },
+      typeiserror() {
+        return this.isError.type
+      }
+
+    },
+    methods: {
+      
+    }
+  })
+
+</script>
+</html>
