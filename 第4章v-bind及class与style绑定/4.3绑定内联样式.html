@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>4.3绑定内联样式</title>
+</head>
+<style>
+
+</style>
+<body>
+  <div id="app">
+    <div :style="{'color': color,'fontSize': fontSize + 'px'}">内联样式</div>
+    <div :style=styles>写在data里</div>
+  </div> 
+
+</body>
+<script src="../vue.js"></script>
+<script>
+  Vue.config.devtools=false;
+	Vue.config.productionTip=false;
+/*
+  css属性名称使用驼峰命名或短横分隔命名
+  使用:style时，vuejs会自动给特殊的css属性名称增加前缀，例如transform
+*/
+
+ var app = new Vue({
+    el: '#app',
+    data: {
+      color: 'red',
+      fontSize: 20,
+      styles: {
+        color: 'red',
+        fontSize: 20 + 'px',
+      }
+    },
+    computed: {
+      
+    },
+    methods: {
+      
+    }
+  })
+
+</script>
+</html>
