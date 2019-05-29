@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>5.2条件渲染指令</title>
+</head>
+<style>
+  [v-cloak] {
+    display: none;
+  }
+</style>
+
+<body>
+  <div id="app" v-cloak>
+    <p v-if="status === 1">当status为1时显示该行</p>
+    <p v-else-if="status === 2">当status为2时显示该行</p>
+    <p v-else>否则显示该行</p>
+    <button @click="changStatus">切换status</button>
+    <p v-show="status === 1">设置v-shou属性，status为1时显示该行</p>
+    <div v-if="type === 'name'">
+      <label>姓名：</label>
+      <input type="text" placeholder="输入用户名" key="name-input">
+    </div>
+    <div v-else>
+      <label>邮箱：</label>
+      <input type="text" placeholder="输入邮箱" key="mail-input">
+    </div>
+    <button @click="handletoggleClick">切换输入类型</button>
+  </div>
+
+</body>
+<script src="../vue.js"></script>
+<script>
+  Vue.config.devtools = false;
+  Vue.config.productionTip = false;
+  /*1. v-if、v-else-if、v-else
+      vue的条件指令可以根据表达式的值在DOM中渲染或销毁元素/组件
+      如果判断为假，元素及其所有节点将会移除
+    2.vue在渲染元素时，处于效率考虑，会尽可能地复用已有的元素而非重新渲染，
+      如果不想这样做，可以使用vue提供的key属性，它可以让你决定是否复用元素，key的值必须唯一
+    3. v-show
+      v-show是改变元素的css属性display，表达式值为false时，元素会隐藏，DOM结构上会加载内联样式display:none
+      v-show不能在<template>上使用
+    4.v-if 和 v-show的区别
+      ① 通过什么方式显示，
+        v-if值为true时，dom树会添加次dom，为false时，不会加载v-if所在的标签，如果原来有就在将其在dom树上移除，没有就不会加载
+        v-show是通过改变样式，如果为true，就会给此标签添加一个标签display：block，如果为false，就将样式改为display：none，不管条件是什么，dom树上都会有这个标签，
+      ② v-if有更高的切换消耗，而v-show有更多的初始化渲染消耗。
+      (2)v-if是真正的条件渲染，v-show只是css属性切换，v-if更适合不经常改变的场景，
+        v-show适用于频繁的切换条件
+  */
+
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      status: 1,
+      type: 'name'
+    },
+    computed: {
+
+    },
+    methods: {
+      changStatus() {
+        if (this.status > 2) {
+          this.status = 1
+        } else {
+          this.status++
+        }
+      },
+      handletoggleClick() {
+        this.type = this.type === 'name' ? 'mail' : 'name'
+      }
+    }
+  })
+</script>
+
+</html>

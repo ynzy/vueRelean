@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>5.1基本指令</title>
+</head>
+<style>
+  [v-cloak]{
+    display: none;
+  }
+</style>
+<body>
+  <div id="app" v-cloak>
+    <div v-once></div>
+  </div> 
+
+</body>
+<script src="../vue.js"></script>
+<script>
+  Vue.config.devtools=false;
+	Vue.config.productionTip=false;
+/*
+ 当网速较慢时，vue.js还没完全加载完，屏幕会有闪动，出现{{message}}模板字样，
+ 直到创建vue实例，编译末班后，dom才会消失，
+ v-cloak是一个解决初始化导致页面闪动的最佳实战
+*/
+/*
+v-onve的作用是定义它的元素或组件只渲染一次，包括元素或组件所有子节点,
+首次渲染后，不再随数据的变化重新渲染，将被视为静态内容
+*/
+
+ var app = new Vue({
+    el: '#app',
+    data: {
+      
+     
+    },
+    computed: {
+      
+    },
+    methods: {
+      
+    }
+  })
+
+</script>
+</html>
