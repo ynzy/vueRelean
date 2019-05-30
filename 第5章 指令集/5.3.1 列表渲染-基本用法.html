@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>5.3 列表渲染</title>
+</head>
+<style>
+  [v-cloak] {
+    display: none;
+  }
+</style>
+
+<body>
+  <div id="app" v-cloak>
+    <!-- 基本用法 -->
+    <div>循环数组</div>
+    <ul>
+      <li v-for="(book, index) of books" :key="index"> 
+        {{index}}--{{book.name}}
+      </li>
+    </ul>
+    <div>循环对象</div>
+    <ul>
+      <li v-for="(value, key, userindex) in user" :key="userindex">
+        {{userindex}} -- {{key}} -- {{value}}
+      </li>
+    </ul>
+    <div>迭代整数</div>
+    <ul>
+     <span v-for="val in 10">{{val}}</span>
+    </ul>
+  </div>
+
+</body>
+<script src="../vue.js"></script>
+<script>
+  Vue.config.devtools = false;
+  Vue.config.productionTip = false;
+/*
+  5.3.1 基本用法
+   1.当需要将一个数组遍历或枚举一个对象循环显示时，用列表渲染指令v-for
+   2.表达式通常结合in使用，类似于item in item 形式，列表渲染也支持of来代替in作为分隔符
+   3.除了数组，对象属性也是可以遍历的,遍历对象时，有两个可选参数，键名和索引
+   4.v-for也可以迭代整数
+  5.3.2 数组更新
+
+*/
+
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      books: [{
+        name: 'vue实战'
+      }, {
+        name: 'javascript权威指南'
+      }, {
+        name: 'javascript高级程序设计'
+      }],
+      user: {
+        name: 'aresn',
+        gender: '男',
+        age: 26
+      }
+
+    },
+    computed: {
+
+    },
+    methods: {
+
+    }
+  })
+</script>
+
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>5.3.2 列表渲染-数组更新</title>
+</head>
+<style>
+  [v-cloak] {
+    display: none;
+  }
+</style>
+
+<body>
+  <div id="app" v-cloak>
+    <!-- 数组更新 -->
+    <ul>
+        <li v-for="(book, index) of books" :key="index"> 
+          {{index}}--{{book.name}}
+        </li>
+      </ul>
+      <button @click="push">push数组</button>
+      <button @click="pop">pop数组</button>
+      <button @click="shift">shift数组</button>
+      <button @click="unshift">unshift数组</button>
+      <button @click="spliceAdd">splice添加数组</button>
+      <button @click="spliceReplace">splice替换数组</button>
+      <button @click="spliceDelete">splice删除数组</button>
+  </div>
+
+</body>
+<script src="../vue.js"></script>
+<script>
+  Vue.config.devtools = false;
+  Vue.config.productionTip = false;
+/*
+  5.3.2 数组更新
+  vue包含了一组观察数组变异的方法，他们改变数组也会触发视图更新
+  变异方法
+  push() 方法可向数组的末尾添加一个或多个元素，并返回新的长度。
+  pop() 方法用于删除并返回数组的最后一个元素。
+  shift() 方法用于把数组的第一个元素从其中删除，并返回第一个元素的值。
+  unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
+  splice() 方法向/从数组中添加/删除项目，然后返回被删除的项目。
+    splice(index,len,[item])它也可以用来替换/删除/添加数组内某一个或者几个值（该方法会改变原始数组）
+      index:数组开始下标       
+      len: 替换/删除的长度,如果设置为 0，则不会删除项目。       
+      item:替换的值，删除操作的话 item为空
+  //TODO: 数组排序
+  sort() 方法用于对数组的元素进行排序。
+  reverse() 方法用于颠倒数组中元素的顺序。
+
+  替换数组
+  filter() 方法创建一个新的数组，新数组中的元素是通过检查指定数组中符合条件的所有元素。
+  concat() 方法用于连接两个或多个数组。
+  slice() 方法可从已有的数组中返回选定的元素。
+  其他
+  split() 方法用于把一个字符串分割成字符串数组。
+*/
+
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      books: [{
+        name: 'vue实战'
+      }, {
+        name: 'javascript权威指南'
+      }, {
+        name: 'javascript高级程序设计'
+      },{
+          name: 'css揭秘'
+        }],
+      user: {
+        name: 'aresn',
+        gender: '男',
+        age: 26
+      }
+    },
+    methods: {
+      push() {
+        this.books.push({
+          name: 'css揭秘'
+        })
+      },
+      pop() {
+        this.books.pop()
+      },
+      shift(){
+        this.books.shift()
+      },
+      unshift() {
+        this.books.unshift({
+          name: 'css揭秘'
+        })
+      },
+      spliceAdd() {
+        //在下标为1处，添加一项数据
+        this.books.splice(1,0,{name:'新添加的'})
+      },
+      spliceReplace() {
+        //替换起始下标为1，长度为1的一个值为新的数据，
+        // this.books.splice(1,1,{name:'被替换的'})        
+        //替换起始下标为1，长度为2的两个值为新的数据，
+        this.books.splice(1,2,{name:'被替换的'})
+      },
+      spliceDelete() {
+        //删除起始下标为1，长度为1的值（如果设为0，则数组不变）
+        this.books.splice(1,1)
+
+      }
+    }
+  })
+</script>
+
+</html>
