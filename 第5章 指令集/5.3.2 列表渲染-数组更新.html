@@ -29,14 +29,29 @@
     <button @click="spliceReplace">splice替换数组</button>
     <button @click="spliceDelete">splice删除数组</button>
     <button @click="sortobject">数组对象排序</button>
+    <button @click="setfilter">过滤数组</button>
+    <div>
+      <span>{{newdata}}</span>
+      <button @click="setSlice">返回选定的数组</button>
+    </div>
+    
     <div>
       <span v-for="(number, index) in numbers">{{number}} </span>
       <div>
         <button @click="sortup">数字升序</button>
         <button @click="sortdown">数字降序</button>
         <button @click="random">随机排序</button>
-
+        <button @click="reverse">数组反转</button>
+        <button @click="setconcat">数组链接</button>
       </div>
+    </div>
+    <div>
+      <div>{{stringdata}}</div>
+      <div>{{newstringdata}}</div>
+      <div>{{newstring}}</div>
+      <button @click="split">分割字符串为数组</button>
+      <button @click="stringreseve">反转字符串数组</button>
+      <button @click="join">字符串转数组</button>
     </div>
 
   </div>
@@ -49,7 +64,7 @@
   /*
     5.3.2 数组更新
     vue包含了一组观察数组变异的方法，他们改变数组也会触发视图更新
-    变异方法
+    变异方法（会改变调用的原始数组）
     push() 方法可向数组的末尾添加一个或多个元素，并返回新的长度。
     pop() 方法用于删除并返回数组的最后一个元素。
     shift() 方法用于把数组的第一个元素从其中删除，并返回第一个元素的值。
@@ -68,12 +83,18 @@
       https://www.cnblogs.com/xljzlw/p/3694861.html
     reverse() 方法用于颠倒数组中元素的顺序。
 
-    替换数组
+    替换数组(不会改变原数组)
     filter() 方法创建一个新的数组，新数组中的元素是通过检查指定数组中符合条件的所有元素。
-    concat() 方法用于连接两个或多个数组。
+      注意：以下变动的数组中，vue是不能检测的，filter无法过滤，书P42
+        * 通过索引直接设置项，比如：app.books[3]={...},解决方法，通过Vue.set设置修改值，或者使用splice
+        * 修改数组的长度,比如：app.books.length=1，解决方法，使用splice
+    concat() 方法用于连接两个或多个数组。添加的是数组中的元素，而不是数组。
     slice() 方法可从已有的数组中返回选定的元素。
+      注释：您可使用负值从数组的尾部选取元素。
+      注释：如果 end 未被规定，那么 slice() 方法会选取从 start 到数组结尾的所有元素。
     其他
     split() 方法用于把一个字符串分割成字符串数组。
+    join()  方法用于把数组中的所有元素放入一个字符串。元素是通过指定的分隔符进行分隔的。
   */
   //自定义升序
   var compare = (prpo) => {
@@ -132,7 +153,12 @@
         gender: '男',
         age: 26
       },
-      numbers: [40, 100, 1, 5, 25, 10]
+      numbers: [40, 100, 1, 5, 25, 10],
+      numbers2: [40, 100, 1, 5, 25, 10],
+      newdata: {},
+      stringdata: '我是一个字符串',
+      newstringdata: [],
+      newstring: ''
     },
     methods: {
       push() {
@@ -175,9 +201,9 @@
       sortup() {
         //升序
         this.numbers.sort((a, b) => {
-          console.log(a)
-          console.log(b)
-          console.log('----')
+          // console.log(a)
+          // console.log(b)
+          // console.log('----')
           return a - b
         });
       },
@@ -189,6 +215,32 @@
       },
       random() {
         this.numbers.sort(sortRandom)
+      },
+      reverse() {
+        this.numbers.reverse();
+      },
+      setfilter() {
+       this.books = this.books.filter((item)=>{
+          // console.log(item.name.match(/javascript/))
+          return item.name.match(/javascript/)
+        })
+      },
+      setconcat() {
+        this.numbers = this.numbers.concat(this.numbers2)
+      },
+      setSlice() {
+       this.newdata = this.books.slice(1,2)
+      },
+      split() {
+        // console.log(this.stringdata)
+        // console.log(this.stringdata.split(''))
+        this.newstringdata = this.stringdata.split('')
+      },
+      stringreseve() {
+        this.newstringdata.reverse()
+      },
+      join() {
+       this.newstring = this.newstringdata.join('')
       }
     }
   })
