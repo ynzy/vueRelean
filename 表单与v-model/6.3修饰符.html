@@ -13,7 +13,13 @@
 </style>
 <body>
   <div id="app" v-cloak>
-      
+    <!-- msg不是实时改变的，是在失去焦点或者按回车键时才更新 -->
+      <input type="text" v-model.lazy="msg">
+      <p>{{msg}}</p>
+      <input type="text" v-model.number="number">
+      <p>{{typeof number}}</p>
+      <input type="text" v-model.trim="trim">
+      <p>{{trim}}</p>
   </div>
 
 </body>
@@ -21,15 +27,19 @@
 <script>
   Vue.config.devtools=false;
   Vue.config.productionTip=false;
-/*
-
+/*v-model的修饰符用于控制数据同步的时机
+  .lazy:v-model默认是在input事件中同步输入框中的数据，使用修饰符.lazy会转变为在change事件中同步
+  .number：使用修饰符.number可以将输入转换为Number类型，否则虽然你输入的是数字，但他的类型是String
+  .trim: 自动过滤输入的首尾空格
 */
 
 
  var app = new Vue({
     el: '#app',
     data: {
-       
+       msg:'',
+       number: '',
+       trim: ''
     },
     computed: {
 
