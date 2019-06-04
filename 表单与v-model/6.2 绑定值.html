@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>6.2 绑定值</title>
+</head>
+<style>
+  [v-cloak]{
+    display: none;
+  }
+</style>
+<body>
+  <div id="app" v-cloak>
+      <!-- 在选中时，app.picked === app.value.值都是123 -->
+    <input type="radio" v-model="picked" :value="value">
+    <label for="">单选按钮</label>
+    <p>{{picked}}</p>
+    <p>{{value}}</p>
+    <div>复选框</div>
+    <!-- 勾选时，app.toogle === app.vlue1;未勾选事，app.toggle === app.value2 -->
+    <input type="checkbox" v-model="toggle" :true-value="value1" :false-value="value2">
+    <span>{{toggle}}</span>
+    <div>选择列表</div>
+    <select v-model="selected">
+        <option :value="{number: 123}">123</option>
+    </select>
+    <span>选择的值：{{selected.number}}</span>
+  </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+  Vue.config.devtools=false;
+  Vue.config.productionTip=false;
+/*
+
+*/
+
+
+ var app = new Vue({
+    el: '#app',
+    data: {
+        picked: false,
+        value: 123,
+        toggle: false,
+        value1: 'a',
+        value2: 'b',
+        selected: {
+            number: ''
+        }
+    },
+    computed: {
+
+    },
+    methods: {
+
+    }
+  })
+
+</script>
+</html>
