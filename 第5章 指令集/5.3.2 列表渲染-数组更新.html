@@ -53,7 +53,18 @@
       <button @click="stringreseve">反转字符串数组</button>
       <button @click="join">字符串转数组</button>
     </div>
-
+<ul>
+  <template v-for="(book, index) in filterBooks" >
+    <li>书名：{{book.name}}</li>
+    <li>作者：{{book.id}}</li>
+  </template>
+</ul>
+<ul>
+  <template v-for="(book, index) in sortedBooks" >
+    <li>书名：{{book.name}}</li>
+    <li>作者：{{book.id}}</li>
+  </template>
+</ul>
   </div>
 
 </body>
@@ -95,6 +106,8 @@
     其他
     split() 方法用于把一个字符串分割成字符串数组。
     join()  方法用于把数组中的所有元素放入一个字符串。元素是通过指定的分隔符进行分隔的。
+    5.3.3 过滤与排序
+      当你不想改变原数组，想通过一个数组的副本来做过滤或排序的显示，可以使用计算属性来返回过滤或排序后的数组
   */
   //自定义升序
   var compare = (prpo) => {
@@ -159,6 +172,19 @@
       stringdata: '我是一个字符串',
       newstringdata: [],
       newstring: ''
+    },
+    computed: {
+      filterBooks() {  //过滤图书
+        return this.books.filter((book)=> {
+          return book.name.match(/javascript/)
+        })
+      },
+      sortedBooks() {  //书籍排序
+        return this.books.sort((a, b) =>{
+          // console.log(b.name.length)
+          return a.name.length - b.name.length
+        }) 
+      }
     },
     methods: {
       push() {
