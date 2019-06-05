@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>7.1 组件与复用</title>
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <my-component></my-component>
+        <my-com></my-com>
+        <table>
+            <tbody is="my-component"></tbody>
+        </table>
+        <add-com></add-com>
+        <add-com></add-com>
+        <add-com></add-com>
+    </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+    /*  组件需要注册后才能使用，注册有全局注册和局部注册两种方式。全局注册后，任何vue实例都可以使用。
+        除了template选项外，组件中还可以像vue实例那样使用其他的选项。
+        data属性必须是函数，然后将数据return出去。
+        javascript对象是引用关系，所以如果return出的对象引用外部的一个对象，那这个对象就是共享的，任何一方修改都会同步。
+    */
+    /* 全局注册:
+        my-component是注册的组件的自定义标签名称，推荐使用小写加减号分隔的形式命名
+        要在父实例中使用这个组件，必须要在实例创建前注册。
+    */
+    /* 局部注册
+        vue实例中，使用components选项可以局部注册组件，注册后的组件只有在该实例作用域下有效。
+        组件中也可以使用components选项来注册组件，使组件可以嵌套。
+    */
+    /* vue组件的模板在某些情况下会受到HTML限制，比如<table>内规定只允许是<tr>、<td>、<th>等这些表格元素，所以直接使用组件是无效的,会直接将组件放在table之外。
+        可以使用特殊的is属性来挂载组件,
+        tbody在渲染时，会被替换为组件的内容。常见的限制元素还有<ul><ol><select>
+        注意：如果使用的是字符串模板，是不受限制的，比如.vue单文件
+    */
+    Vue.component('my-component', {
+        template: '<div>{{message}}</div>',
+        data() {
+            return {
+                message: '使用data的组件的内容'
+            }
+        }
+    })
+    var child = {
+        template: '<div>组件嵌套的内容</div>'
+    }
+    var add = {
+        // template: '',
+        template: '<button @click="counter++">{{counter}}</button>',
+        data() {
+            return {
+                counter: 0
+            };
+        }
+    }
+    var app = new Vue({
+        el: '#app',
+        data: {},
+        components: {
+            'my-com': child,
+            'add-com': add
+        },
+        computed: {
+
+        },
+        methods: {
+
+        }
+    })
+</script>
+
+</html>
