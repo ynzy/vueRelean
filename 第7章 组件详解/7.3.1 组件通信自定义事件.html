@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>7.3 组件通信-自定义事件</title>
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <p>总数： {{total}}</p>
+        <my-component @increase="handleGetToal" @reduce="handleGetToal" @click.native="handleNative"></my-component>
+        <my-com v-model="total"></my-com>
+        <my-com2 v-model="total"></my-com2>
+        <button @click="handleReduce2">-1</button>
+    </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+    /* 组件关系可以分为父子组件通信、兄弟组件通信、跨级组件通信。
+        7.3.1 自定义事件
+        子组件用$emit()来触发事件，父组件用$on来监听子组件的事件。
+        父组件也可以直接在子组件的自定义标签上使用v-on来监听子组件触发的自定义事件
+        除了用v-on在组件上监听自定义事件外，也可以监听DOM事件，这时可以使用.native修饰符表示监听的是一个原生事件，监听的是该组件的根元素
+        7.3.2 使用v-model
+         组件$emit()的事件名是特殊的input，在使用组件的父级，直接使用v-mode绑定一个数据
+         v-mode还可以用来创建自定义的表单输入组件，进行数据双向绑定
+    */
+//    自定义事件
+    Vue.component('my-component', {
+        template: '<div>\
+                        <button @click="handleIncrease">+1</button>\
+                        <button @click="handleReduce">-1</button>\
+                        <button @click="handleNative">原生事件</button>\
+                    </div>',
+        data() {
+            return {
+                counter: 0
+            }
+        },
+        methods: {
+            handleIncrease() {
+                this.counter++;
+                //自定义事件名，数据
+                this.$emit('increase', this.counter)
+            },
+            handleReduce() {
+                this.counter--;
+                this.$emit('reduce', this.counter)
+            },
+            handleNative() {
+                this.$emit('handleNative')
+            }
+        }
+    })
+    // 特殊语法糖input
+    Vue.component('my-com', {
+        template: '<button @click="handleIncrease">+1</button>',
+        data() {
+            return {
+                counter: 0
+            }
+        },
+        methods: {
+            handleIncrease() {
+                this.counter++;
+                //自定义事件名，数据
+                this.$emit('input', this.counter)
+            },
+        }
+    })
+    //自定义表单输入组件
+    Vue.component('my-com2', {
+        props: ['value'],
+        template: '<input type="text" :value="value" @input="updateValue">',
+        methods: {
+            updateValue(event) {
+                this.$emit('input', event.target.value)
+            }
+        }
+    })
+    var app = new Vue({
+        el: '#app',
+        data: {
+            total: 0
+        },
+        computed: {
+
+        },
+        methods: {
+            handleGetToal(total) {
+                this.total = total
+            },
+            handleNative(e) {
+                console.log(e)
+            },
+            handleReduce2() {
+                this.total --
+            }
+        }
+    })
+</script>
+
+</html>
