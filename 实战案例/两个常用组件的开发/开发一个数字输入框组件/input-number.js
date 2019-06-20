@@ -5,7 +5,8 @@ function isValueNumber (value) {
 Vue.component("input-number", {
   template: 
   '<div class="input-number">\
-    <input type="text" :value="currentValue" @change="handleChange">\
+    <input type="text" :value="currentValue" @change="handleChange" \
+    @keyup.up.prevent="kayUpAdd" @keyup.down.prevent="keyUpReduce">\
     <button @click="handleReduce" :disabled="currentValue <= min">-</button>\
     <button @click="handleAdd" :disabled="currentValue >= max">+</button>\
   </div>',
@@ -21,11 +22,16 @@ Vue.component("input-number", {
     min: {  //最小值
       type: Number,
       default: -Infinity
+    },
+    step: {  //增减量
+      type: Number,
+      default: 1
     }
   },
   data() {
     return {
-      currentValue: this.value
+      currentValue: this.value,
+      stepValue: this.step
     }
   },
   watch: {
@@ -38,13 +44,21 @@ Vue.component("input-number", {
     }
   },
   methods: {
+    kayUpAdd() {
+      if(this.currentValue >= this.max) return;
+      this.currentValue += this.stepValue;
+    },
+    keyUpReduce() {
+      if(this.currentValue <= this.min) return;
+      this.currentValue -= this.stepValue;
+    },
     handleReduce() {
       if(this.currentValue <= this.min) return;
-      this.currentValue -= 1;
+      this.currentValue -= this.stepValue;
     },
     handleAdd() {
       if(this.currentValue >= this.max) return;
-      this.currentValue += 1;
+      this.currentValue += this.stepValue;
     },
     handleChange(e) {
       var val = e.target.value.trim();
