@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>7.5 组件高级用法</title>
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+    .header{
+        background: #ccc;
+    } 
+    .footer {
+        background:brown;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <component-a :count="1"></component-a>
+        <component-b inline-template>
+            <div>
+                <p>{{message}}</p>
+                <p>{{msg}}</p>
+            </div>
+        </component-b>
+        <component :is="currentView"></component>
+        <button @click="handleChangeView('A')">切换到a</button>
+        <button @click="handleChangeView('B')">切换到b</button>
+        <button @click="handleChangeView('C')">切换到c</button>
+        <component-c></component-c>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+    /*7.5.1 递归组件
+        组件在它的模板内可以递归的调用自己，只要给组件设置name的选项就可以了。
+        注意：必须给一个条件限制递归数量，否则会抛出错误：Maximum call stack size exceeded 
+        组件递归可以用来开发一些具有未知层级关系的独立组件，比如联级选择器和树形控件
+      7.5.2 内联模板
+        使用组件时，给组件标签使用inline-template特性，
+        组件就会把它的内容当做模板，而不是把它当内容分发，这样模板更灵活。
+        由于父子组件数据都可以渲染(同名优先使用子组件数据)，作用域难以理解，如果不是特殊场景，不建议使用内联模板
+      7.5.3 动态组件
+        vue提供了一个特殊的元素<component>用来动态地挂载不同的组件，使用is特性来选择要挂载的组件。
+        也可以直接绑定在组件对象上
+      7.5.4 异步组件
+        vue允许将组件定义为一个工厂函数，动态地解析组件。
+        vuejs只在组件需要渲染时触发工厂函数，并且把结果缓存起来，用于后面的在此渲染。
+        工厂函数接收一个resolve回调，在收到从服务器下载的组件定义时调用，也可以调用reject指示加载失败。
+        比如把组件配置写成一个对象配置，通过ajax请求，调用resolve传入配置选项。
+    */
+    Vue.component('component-a', {
+        name: 'component-a',
+        props: {
+            count: {
+                type: Number,
+                default: 1
+            }
+        },
+        template: '\
+        <div class="container">\
+                <component-a :count="count+1"\
+                v-if="count<3"></component-a>\
+                递归组件\
+        </div>',
+    })
+    //作用域在子组件
+    Vue.component('component-b', {
+        data() {
+            return{
+                msg: '在子组件声明的数据'
+            }
+        }
+    })
+    Vue.component('component-c', (resolve, reject) => {
+        setTimeout(() => {
+            resolve({
+                template: '<div>我是异步渲染的</div>'
+            })
+        }, 2000);
+    })
+   var home =  {
+       template: '<div>组件对象</div>'
+   }
+    var app = new Vue({
+        el: '#app',
+        components: {
+            comA: {
+                template: '<div>组件A</div>'
+            },
+            comB: {
+                template: '<div>组件B</div>'
+            },
+            comC: {
+                template: '<div>组件C</div>'
+            },
+        },
+        data: {
+            message: '在父组件声明的数据',
+            currentView: home
+        },
+        mounted () {
+            
+        },
+        methods: {
+            handleChangeView(component) {
+                this.currentView = 'com' + component
+            }
+        }
+    })
+</script>
+
+</html>

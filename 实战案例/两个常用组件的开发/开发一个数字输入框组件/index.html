@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>数字输入框组件</title>
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <input-number v-model="value" :max="500" :min="0" :step="10" @on-change="getchange"></input-number>
+    
+    </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="./input-number.js"></script>
+<script src="./index.js"></script>
+<script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+/*
+第一、需求: 1)数字输入框只能输入数字，而且有两个快捷按钮，可以直接减1或加1.
+           2)设置初始值、最大值、最小值，在数值改变时，触发一个自定义事件来通知父组件。
+           3)在输入框聚焦时，增加对键盘上下按键的支持，相当于加1和减1.
+           4)增加一个控制不发的prop-step，比如设置为10，当点击加号按钮，一次增加10
+第二、规划api，一个vue组件的api只能来自props、events和slots
+    1. 对每个prop进行校验，在父组件引入input-number组件，并给其值
+    2.初始化时应用父组件value问题：
+        大多数表单类组件都应该有一个v-model，value是一个关键的绑定值，使用v-model实现双向绑定。
+      vue组件是单向数据流，所以无法从组件内部直接修改prop value的值。
+      解决方法：给组件声明一个data，默认引用value的值，然后在组件内维护这个值data。
+    3.父组件修改了value，input-number组件的currentValue也要更新。
+      通过监听(watch)选项用来监听某个prop或data的改变。
+      监听value是为了知晓父组件修改了value，进而修改currentValue值。
+      监听currentValue是为了当currentValue改变时，更新value，使用$emit
+      updatedValue方法过滤更新传入的值，判断是否是最大最小值。
+    4.补全模板，加入输入框和两个按钮，自定义校验输入值是否是数字
+      input绑定了数据currentValue和原生的change事件，在这里绑定的currentValue也是单向数据流，并没有用model，
+      所以在输入时，currentValue的值并没有实时改变。
+*/
+    
+</script>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>5.3 列表渲染</title>
+</head>
+<style>
+  [v-cloak] {
+    display: none;
+  }
+</style>
+
+<body>
+  <div id="app" v-cloak>
+   点击次数{{counter}}
+   <button @click="handleAdd($event)">+1</button>
+   <button @click="handleAdd($event,10)">+10</button>
+    <a href="www.baidu.com" @click="handleClick('禁止打开',$event)">打开链接</a>
+  <!-- 阻止单击事件冒泡 -->
+  <a href="" @click.stop="handle"></a>
+  <!-- 提交事件不再重载页面 -->
+  <form action="" @submit.prevent="handle2"></form>
+  <!-- 修饰符可以串联 -->
+  <a href="" @click.stop.prevent="handle3"></a>
+  <!-- 只有修饰符 -->
+  <form action="" @submit.prevent></form>
+  <!-- 添加事件监听器时使用事件捕获方式 -->
+  <div @click.capture="handle4">...</div>
+  <!-- 只当事件在该元素本身（而不是子元素）触发时触发回调 -->
+  <div @click.self="handle5"></div>
+  <!-- 只触发一次，组件同样适用 -->
+  <div @click.once></div>
+  <!-- 只有在keycode是13时调用vm.submit -->
+  <input type="text" @keyup.13="submit">
+  </div>
+
+</body>
+<script src="../vue.js"></script>
+<script>
+  Vue.config.devtools = false;
+  Vue.config.productionTip = false;
+/*
+5.4.1
+  @click方法名后可以不跟(),此时，该方法有参数，会默认将原生对象event传入,如果既想传参数又想获取原生event对象，使用$event
+  vue提供了一个特殊变量$event,用于访问原生DOM事件。
+5.4.2
+  event.preventDefault()也可以使用vue事件的修饰符来实现，在@绑定的事件后加小圆点.，再跟一个后缀来使用修饰符。
+  .stop;.prevent;.capture;.self;.once
+  在表单元素上监听键盘事件时，还可以使用按键修饰符，比如按下某个键时才调用方法
+*/
+
+// 也可以自己配置具体按键
+Vue.config.keyCodes.f1 = 112
+//全局定义后，就可以使用@keyup.f1
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      counter: 0,
+
+    },
+    computed: {
+
+    },
+    methods: {
+      handleAdd(e,count) {
+        // console.log(e)
+        // console.log(count)
+        count = count || 1;
+        //this指向当前vue实例app
+        this.counter += count 
+      },
+      handleClick(msg, event) {
+        console.log(event)
+        event.preventDefault();
+        alert(msg)
+      }
+    }
+  })
+</script>
+
+</html>

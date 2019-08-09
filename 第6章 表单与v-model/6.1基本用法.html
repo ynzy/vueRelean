@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>6.1基本用法</title>
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <input type="text" v-model="message" placeholder="请输入">
+        <p>输入的内容是：{{message}}</p>
+        <textarea v-model="message" name="" id="" cols="30" rows="5"></textarea>
+        <input type="text" @input="handleInput">
+        <div>单选按钮：</div>
+        <!-- 单独使用 -->
+        <input type="radio" :checked="picked1">
+        <!-- 组合使用 -->
+        <input type="radio" v-model="picked" value="html" id="html">
+        <label for="html">html</label>
+        <input type="radio" v-model="picked" value="js" id="js">
+        <label for="js">js</label>
+        <input type="radio" v-model="picked" value="css" id="css">
+        <label for="css">css</label>
+        <div>多选按钮</div>
+        <!-- 单独使用 -->
+        <input type="checkbox" v-model="checked" id="checked">
+        <label for="checked"> 选择状态：{{checked}}</label>
+        <br>
+        <!-- 组合使用 -->
+        <input type="checkbox" v-model="checked1" value="html" id="html">
+        <label for="html">html</label>
+        <input type="checkbox" v-model="checked1" value="js" id="js">
+        <label for="js">js</label>
+        <input type="checkbox" v-model="checked1" value="css" id="css">
+        <label for="css">css</label>
+        <span>选择的项是：{{checked1}}</span>
+        <div>选择列表</div>
+        <div>单选列表</div>
+        <!-- 单选列表 -->
+        <select v-model="selected">
+            <option value="html">html</option>
+            <option value="js">JavaScript</option>
+            <option value="css">css</option>
+        </select>
+        <span>选择的项是：{{selected}}</span>
+        <div>多选列表</div>
+        <select v-model="selected2" multiple>
+            <option v-for="option in options" :value="option.value">{{option.text}}</option>
+        </select>
+        <span>选择的项是：{{selected2}}</span>
+    </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+    /*
+        1)v-model指令，用于在表单类元素上双向绑定数据,
+            使用指令之后，表单控件显示的值只依赖所绑定的数据，不再关系初始化时的属性。
+            如果希望总是实时更新，可以用@input来代替v-model
+        2)单选按钮，
+            单独使用时，不需要v-model，直接使用v-bind绑定一个布尔类型的值，为真时选中，为否事不选;
+            如果是组合使用来实现互斥选择效果，需要v-model配合value使用
+        3)复选框
+            单独使用时，绑定一个布尔值
+            组合使用时，使用v-model与value组合，多个勾选框都绑定到同一个数组类型的数据，value的值在数组当中，就会选中这一项
+        4)选择列表
+            <option>是备选项，如果含有value属性，v-model就会优先匹配value的值，如果没有，就会直接匹配<option>的text
+          复选，添加属性multiple就可以多选了，此时v-model绑定的是一个数组
+
+    */
+
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: '',
+            picked1: true,
+            picked: 'js',
+            checked: false,
+            checked1: [],
+            selected: 'html',
+            selected2: [],
+            options: [{
+                text: 'html',
+                value: 'html'
+            }, {
+                text: 'javascript',
+                value: 'js'
+            }, {
+                text: 'css',
+                value: 'css'
+            }, ]
+
+        },
+        computed: {
+
+        },
+        methods: {
+            handleInput(e) {
+                console.log(e)
+                this.message = e.target.value
+            }
+        }
+    })
+</script>
+
+</html>

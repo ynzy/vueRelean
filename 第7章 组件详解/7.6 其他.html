@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>7.6 其他用法</title>
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+    .header{
+        background: #ccc;
+    } 
+    .footer {
+        background:brown;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <div id="div" v-if="showDiv">这是一段文本</div>
+        <button @click="getText">获取 div 内容</button>
+        <component-a></component-a>
+        <script type="text/X-Template" id="component-a">
+            <div>这是组件的内容</div>
+        </script>
+    </div>
+    <div id="mount-div"></div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+<script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+    /* 7.6.1 $nexTick
+       TODO: 异步更新队列：
+       vue在观察到数据变化时并不是直接更新DOM，而是开启一个队列，并缓冲在同一事件循环中发生的所有数据改变。
+       在缓冲时会去除重复数据，从而避免不必要的计算和DOM操作。
+       而后，在下一个事件循环tick中，vue刷新队列并执行实际（已去重）工作。
+       我们不应该去主动操作DOM，因为Vue的核心思想就是数据驱动DOM，
+       但在很多业务里，我们避免不了会用使用第三方库，
+       基于原生javascript的库都有创建和更新及销毁的完整生命周期，与vue配合使用时，就要利用好$nextTcik。
+       7.6.2 X-Templates
+       vue提供了另一种定义模板的方式，在<script>标签里使用text/x-template类型，并且指定一个id，将这个id赋给template。
+       7.6.3 手动挂载实例
+       vue提供了Vue.extend和$mount两个方法来手动挂载一个实例。
+       Vue.extend是基础vue构造器，创建一个‘子类’，参数就是一个包含组件选项的对象。
+       如果vue实例在实例化时没有收到el选项，它就处于“未挂载”状态，没有关联的DOM元素，
+       可以使用$mount()手动的挂载一个未挂载的实例。这个方法返回实例自身，因而可以链式调用其他实例方法。
+    */
+    Vue.component('component-a', {
+        template: '#component-a'
+    })
+    var app = new Vue({
+        el: '#app',
+        data: {
+            showDiv: false
+        },
+        mounted () {
+            
+        },
+        methods: {
+            getText() {
+                this.showDiv = true;
+                this.$nextTick(() => {
+                    var text = document.getElementById('div').innerHTML
+                    console.log(text)
+                })
+                //作为一个promise对象使用
+                // this.$nextTick().then(() =>{
+                //     var text = document.getElementById('div').innerHTML
+                //     console.log(text)
+                // }) 
+            }
+        }
+    })
+</script>
+<script>
+    var MyComponent = Vue.extend({
+        template: '<div>Hello:{{name}}</div>',
+        data() {
+            return {
+                name: 'aresn'
+            }
+        }
+    })
+    //方法一
+        // new MyComponent().$mount('#mount-div')
+    //方法二
+        // new MyComponent({
+        //     el: '#mount-div'
+        // })
+    //方法三
+      var component = new MyComponent().$mount();
+      document.getElementById('mount-div').appendChild(component.$el)
+</script>
+</html>

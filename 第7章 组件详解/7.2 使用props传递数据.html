@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>7.2 使用props传递数据</title>
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <my-component message="来自父组件的数据"></my-component>
+        <my-com warning-text="提示的信息"></my-com>
+        <input type="text" v-model="parentMessage">
+        <my-com2 :message="parentMessage"></my-com2>
+        <!-- 如果直接传递数字、布尔值、数组、对象，需要使用v-bind。否则传入的只是字符串 -->
+        <my-com3 message="[1,2,3]"></my-com3>
+        <my-com3 :message="[1,2,3]"></my-com3>
+        <!-- 组件中声明了数据count，它在组件初始化时会获取来自父组件的initCount，之后就与之无关了，只用维护count，这样避免了直接操作initCount -->
+        <my-com4 :init-count="1"></my-com4>
+        <!-- 因为用css传递宽度要带单位(px),但是每次都写太麻烦，而且数值计算一般是不带单位的，所以统一在组件内使用计算属性就可以了 -->
+        <my-com5 :width="100" style="background: #cd3"></my-com5>
+    </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+    /* 7.1.1 基本用法
+        在组件中，使用选项props来声明需要从父级接收的数据，props的值可以是两种，一种是字符串数组，一种是对象。
+        props中声明的数据与组件data函数return的数据主要区别就是props的来自父级，而data中的是组件自己的数据，作用域是组件本身。
+        由于HTML特性不区分大小写，当使用DOM模板时，驼峰命名(camelCase)的props名称要转为短横分隔命名(kebab-case)
+            注意： 使用字符串模板时，可以忽略这些限制
+        如果直接传递数字、布尔值、数组、对象，需要使用v-bind。否则传入的只是字符串
+       7.2.2 单向数据流 ，业务中经常会遇到两种需要改变prop的情况
+        (1)一种是父组件传递初始值进来，子组件作为初始值保存起来，在自己的作用余下可以随意使用和修改，这种情况可以在组件data内再声明一个数据，引用父组件的prop
+        (2)prop作为需要被转变的原始值传入。这种情况用计算属性就可以了
+       7.2.3 数据验证
+        当prop需要验证时，就需要对象写法。
+        验证的type类型可以是：
+            String，Number，Boolean，Object，Array，Function
+        type也可以是一个自定义构造器，使用instanceof检测
+        当prop验证失败是，在开发版本下会在控制台抛出一条警告。
+    */
+    Vue.component('my-component', {
+        props: ['message'],
+        template: '<div>{{message}}</div>',
+        data() {
+            return {
+            }
+        }
+    })
+    var child = {
+        props: ['warningText'],
+        template: '<div>{{warningText}}</div>'
+    }
+    var child2 = {
+        props: ['message'],
+        template: '<div>{{message}}</div>'
+    }
+    var child3 = {
+        props: ['message'],
+        template: '<div>{{message.length}}</div>'
+    }
+    Vue.component('my-com4', {
+        props: ['initCount'],
+        template: '<div>{{count}}</div>',
+        data() {
+            return{
+                count: ++this.initCount
+            }
+        }
+    })
+    Vue.component('my-com5', {
+        props: ['width'],
+        template: '<div :style="style">计算宽度</div>',
+        computed: {
+            style() {
+                return {
+                    width: this.width + 'px'
+                }
+            }
+        }
+    })
+    Vue.component('my-com6', {
+        props: {
+            //必须是数字类型
+            propA: Number,
+            //必须是字符串或数字类型
+            propB: [String,Number],
+            //布尔值，如果没有定义，默认值就是true
+            propC: {
+                type: Boolean,
+                default: true
+            },
+            //数字，而且是必传
+            propD: {
+                type: Number,
+                required: true
+            },
+            //如果是数组或对象，默认值必须是一个函数来返回
+            propE: {
+                type: Array,
+                default: function() {
+                    return []
+                }
+            },
+            //自定义验证函数
+            propF: {
+                validator: function(value) {
+                    return value > 10
+                }
+            }
+        }
+    })
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+                parentMessage: ''
+        },
+        components: {
+            'my-com': child,
+            'my-com2': child2,
+            'my-com3': child3,
+        },
+        computed: {
+
+        },
+        methods: {
+
+        }
+    })
+</script>
+
+</html>

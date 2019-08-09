@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>开发购物车实例</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+
+    .handle-btn {
+        padding: 0 0.4rem;
+
+    }
+</style>
+
+<body>
+        <div id="app" cloak>
+                <template v-if="list.length">
+                    <table>
+                        <tbody v-for="(tableItem, tableIndex) in list" v-if="tableItem.productList.length">
+                            <tr>
+                                <th><input type="checkbox" @click="handleTableItem(tableItem)"
+                                        :checked="isCheckedTableItem(tableItem)">{{ tableItem.name }}</th>
+                                <th>序号</th>
+                                <th>商品名称</th>
+                                <th>商品单价</th>
+                                <th>购买数量</th>
+                                <th>操作</th>
+                            </tr>
+                            <tr v-for="(item, index) in tableItem.productList">
+                                <td><input type="checkbox" @click="handleChecked(item)" :checked="isChecked(item)"></td>
+                                <td>{{ index + 1 }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.price }}</td>
+                                <td>
+                                    <button @click="handleReduce(item)" :disabled="item.count===1">-</button>
+                                    {{ item.count }}
+                                    <button @click="handleAdd(item)">+</button>
+                                </td>
+                                <td>
+                                    <button @click="handleRemove(index, tableIndex)">移除</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <input type="checkbox" @click="checkAll()" :checked="isCheckedAll()">全选
+                    </div>
+                    <div>总价：￥{{ totalPrice }}</div>
+                </template>
+                <div v-else>购物车为空</div>
+            </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+<script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+    /* 功能描述:
+        1.展示一个已加入购物车的商品列表，包含商品名称，商品单价，购买数量和操作等信息
+        2.实时显示购买的总价
+        3.购买的数量可增加或减少，每类商品最少购买一件，每类商品可以从购物车中移除
+        4.扩展商品列表，新增一项是否选中该商品的功能，总价变为只计算选中商品的总价，同时提供一个全选按钮
+        5.将商品列表list改为一个二维数组来实现商品的分类，比如分为“电子产品，“生活用品”和“果蔬”
+    */
+    /* 页面制作
+         1.判断是否有商品数据
+             因为每个商品都是可以从购物车移除的，所以当列表为空时，在页面中显示一个“购物车为空”的提示更为友好，我们可以通过判断数组list长度来实现该功能
+         2.总价totalPrice是依赖于商品列表而动态变化的，所以用计算属性来实现，并且结果转化为“千位分隔”的数字    
+    */
+    var app = new Vue({
+            el: '#app',
+            data: {
+                list: [{
+                        name: "电子产品",
+                        productList: [{
+                                id: '1',
+                                name: 'iPhone 7',
+                                price: 6188,
+                                count: 1,
+                                status: 1
+                            },
+                            {
+                                id: '2',
+                                name: 'iPad Pro',
+                                price: 5188,
+                                count: 1,
+                                status: 1
+                            },
+                            {
+                                id: '3',
+                                name: 'MacBook Pro',
+                                price: 21488,
+                                count: 1,
+                                status: 1
+                            }
+                        ]
+                    },
+                    {
+                        name: "生活用品",
+                        productList: [{
+                                id: '1',
+                                name: '尺子',
+                                price: 2.00,
+                                count: 1,
+                                status: 1
+                            },
+                            {
+                                id: '2',
+                                name: '包装箱',
+                                price: 29.99,
+                                count: 1,
+                                status: 1
+                            },
+                            {
+                                id: '3',
+                                name: '毛巾',
+                                price: 15.98,
+                                count: 1,
+                                status: 1
+                            }
+                        ]
+                    },
+                    {
+                        name: "水果蔬菜",
+                        productList: [{
+                                id: '1',
+                                name: '国产香蕉',
+                                price: 2.88,
+                                count: 1,
+                                status: 1
+                            },
+                            {
+                                id: '2',
+                                name: '草莓',
+                                price: 15.00,
+                                count: 1,
+                                status: 1
+                            },
+                            {
+                                id: '3',
+                                name: '车厘子',
+                                price: 29.99,
+                                count: 1,
+                                status: 1
+                            }
+                        ]
+                    }
+                ]
+            },
+            computed: {
+                totalPrice: function () {
+                    var total = 0;
+                    for (var i = 0; i < this.list.length; i++) {
+                        for (var j = 0; j < this.list[i].productList.length; j++) {
+                            var item = this.list[i].productList[j];
+                            if (item.status) {
+                                total += item.price * item.count;
+                            }
+                        }
+                    }
+                    return total != 0 ? total.toString().replace(/\B(?=(\d{3})+$)/g, ',') : 0;
+                }
+            },
+            methods: {
+                handleTableItem: function (tableItem) {
+                    var status = this.isCheckedTableItem(tableItem);
+                    status = status ? 0 : 1;
+                    for (var i = 0; i < tableItem.productList.length; i++) {
+                        tableItem.productList[i].status = status;
+                    }
+                },
+                isCheckedTableItem: function (tableItem) {
+                    //console.log("tableItem: " + tableItem)
+ 
+                    var status = true;
+                    for (var i = 0; i < tableItem.productList.length; i++) {
+                        if (!tableItem.productList[i].status) {
+                            status = false;
+                            return status;
+                        }
+                    }
+                    return status;
+                },
+                //改变某条记录选中状态
+                handleChecked: function (item) {
+                    item.status = !item.status;
+                },
+                handleReduce: function (item) {
+                    if (item.count === 1) return;
+                    item.count--;
+                },
+                handleAdd: function (item) {
+                    item.count++;
+                },
+                handleRemove: function (index, tableIndex) {
+                    this.list[tableIndex].productList.splice(index, 1);
+                },
+                isChecked: function (item) {
+                    return item.status;
+                },
+                isCheckedAll: function () {
+                    //列表全为true该status才为true，否则为false
+                    var status = true;
+                    for (var i = 0; i < this.list.length; i++) {
+                        //一旦列表的status有一个为false则status就为false
+                        for (var j = 0; j < this.list[i].productList.length; j++) {
+                            if (!this.list[i].productList[j].status) {
+                                status = false;
+                                return status;
+                            }
+                        }
+                    }
+                    return status;
+                },
+                checkAll: function () {
+                    //拿到是否是全选
+                    var status = this.isCheckedAll();
+                    status = status ? 0 : 1;
+                    for (var i = 0; i < this.list.length; i++) {
+                        for (var j = 0; j < this.list[i].productList.length; j++) {
+                            this.list[i].productList[j].status = status;
+                        }
+                    }
+                }
+            }
+        })
+</script>
+
+</html>

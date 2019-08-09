@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>7.3.3 非父子组件通信</title>
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+       <div>{{message}}</div>
+       <component-a></component-a>
+       <div>{{parentMsg}}</div>
+       <component-b></component-b>
+       <div ref="div">普通标签</div>
+       <button @click="getcomg">通过ref获取子组件实例</button>
+       <component-c ref="comg"></component-c>
+       <button @click="handleCompare">比较普通标签和组件ref</button>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+    /* 7.3.3 非父子组件通信
+    1.中央事件总线bus
+        1）创建一个空的Vue实例作为中央事件总线
+        2）全局定义组件component-a
+        3）创建Vue实例app，app初始化时在mounted钩子里监听来自bus的事件onMessage
+        4）在组件中点击按钮会通过bus把事件onMessage发送出去，此时app会接收到来自bus的事件，进而在回调中完成自己的业务逻辑。
+    这种方法，可以轻松实现任何组件间的通信，包括父子，兄弟，跨级。也可以在bus实例中添加data，methods等选项。
+    比如一些需要共享的通用信息：用户登录信息，授权token
+    2. 父链
+        在子组件中，使用this.$parent可以直接访问该组件的父实例或组件，父组件也可以通过this.$children访问它所有的子组件，
+        而且可以递归向上或向下无限访问，直到根实例或最内层的组件。
+        在业务中，应该尽可能避免依赖父组件的数据，更不应该主动修改父组件数据。
+        父子组件通信最好还是通过props和$emit来通信。
+    3. 子组件索引
+        当子组件较多时，通过this.$childern来一一遍历出我们需要的一个组件实例是比较困难的，
+        这时可以使用特殊的属性ref来为子组件指定一个索引名称
+        在父组件模板中，子组件标签上使用ref指定一个名称，并在父组件内通过this.$refs来访问指定名称的子组件
+            注意：$refs只在组件渲染完成后才填充，并非是响应式的。应当避免在模板或计算属性中使用$refs.
+                 Vue会自动去判断ref是普通标签还是组件。$refs获取的值不一样。
+    */
+    //中央事件总线
+    var bus = new Vue();
+    Vue.component('component-a', {
+        template: '<button @click="handleEvent">传递事件</button>',
+        data() {
+            return {
+                counter: 0
+            }
+        },
+        methods: {
+            handleEvent() {
+                bus.$emit('onMessage', '来自组件component-a的内容')
+            }
+        }
+    })
+    //父链
+    Vue.component('component-b', {
+        template: '<button @click="handleEvent">通过父链直接修改数据</button>',
+        data() {
+            return {
+                counter: 0
+            }
+        },
+        methods: {
+            handleEvent() {
+                //访问到父链后，可以做任何操作，比如直接修改数据
+                this.$parent.parentMsg = '直接修改父组件数据'
+            }
+        }
+
+    })    
+    //子组件索引
+    Vue.component('component-c', {
+        template: '<div>这是子组件</div>',
+        data() {
+            return {
+                message: '子组件内容'
+            }
+        }
+    })
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: '',
+            parentMsg: ''
+        },
+        mounted () {
+            bus.$on('onMessage',msg => {
+                this.message = msg
+            })
+        },
+        methods: {
+            getcomg() {
+                // console.log(this.$refs.comg.$el.innerHTML)
+                //通过$refs来访问指定的实例
+                var msg = this.$refs.comg.message
+                this.message = msg
+            },
+            handleCompare() {
+                console.log(this.$refs.div)
+                console.log(this.$refs.comg)
+            }
+        }
+    })
+</script>
+
+</html>

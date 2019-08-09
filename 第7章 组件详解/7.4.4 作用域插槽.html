@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>7.4.4 作用域插槽</title>
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+    .header{
+        background: #ccc;
+    } 
+    .footer {
+        background:brown;
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <!-- 状态showchild绑定的是父组件的数据 -->
+       <component-a>
+           <!-- 子组件模板中，<slot>元素上有一个类似props传递数据给组件的写法，msg="xxx", 
+               父组件中使用了<template>元素，并且拥有一个scope="props"的特性，
+               这里的props只是一个临时变量,template可以通过临时变量props访问来自子组件插槽的数据msg -->
+           <template scope="props">
+               <p>来自子组件的内容</p>
+               <p>{{props.msg}}</p>
+           </template>
+       </component-a>
+       <!-- my-list接收一个来自父级的prop数组books,并将他在name为book的slot上使用，
+        v-for指令循环，同时暴露一个变量bookName -->
+       <my-list :books="books">
+            <template slot="header">
+                    头部slot内容
+            </template>
+           <!-- 作用域插槽也可以是具名的solt -->
+           <template slot="book" scope="props">
+               <li>{{props.bookName}}</li>
+           </template>
+       </my-list>
+       <component-d>
+           <h2 slot="header">标题</h2>
+           访问slot分发内容
+       </component-d>
+        
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+    /* 7.4.4 作用域插槽
+        作用域插槽是一种特殊的slot，使用一个可以复用的模板替换已渲染元素。
+       7.4.5 访问slot
+       访问被slot分发的内容的方法是$slots.
+    */
+    Vue.component('component-a', {
+        template: '\
+        <div class="container">\
+            <slot msg="来自子组件的内容"></slot>\
+        </div>',
+    })
+    //作用域在子组件
+    Vue.component('my-list', {
+        props: {
+            books: {
+                type: Array,
+                default() {
+                    return []
+                }
+            }
+        },
+        template: '\
+        <ul>\
+        <slot name="header"></slot>\
+            <slot name="book" v-for="book in books" \
+            :book-name="book.name">\
+                <!-- 这里也可以写默认slot内容 -->\
+                默认slot内容\
+            </slot>\
+        </ul>',
+        data() {
+            return{
+                showChild: true
+            }
+        }
+    })
+    //具名slot
+    Vue.component('component-d', {
+        template: '\
+        <div class="container">\
+            <div class="header">\
+                <slot name="header"></slot>\
+            </div>\
+            <div class="main">\
+                <slot></slot>\
+            </div>\
+            <div class="footer">\
+                <slot name="footer"></slot>\
+            </div>\
+        </div>',
+        mounted() {
+            var header = this.$slots.header;
+            var main = this.$slots.default;
+            console.log(header);
+            console.log(main)
+        }
+    })
+    var app = new Vue({
+        el: '#app',
+        data: {
+            books: [
+                {name: '《vuejs实战》'},
+                {name: '《javascript语言精髓》'},
+                {name: '《css世界》'},
+            ]
+        },
+        mounted () {
+            
+        },
+        methods: {
+            
+        }
+    })
+</script>
+
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>开发购物车实例</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+
+    .handle-btn {
+        padding: 0 0.4rem;
+
+    }
+</style>
+
+<body>
+    <div id="app" v-cloak>
+        <div class="container-fluid">
+            <!-- 判断是否有商品数据 -->
+            <template v-if="shoplists.length">
+                <table class="table table-bordered table-hover ">
+                    <template v-for="(tableItem, tableindex) in shoplists" v-if="tableItem.productList.length">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">
+                                    <input type="checkbox" @click="handleTableItem(tableItem)"
+                                        :ckecked="isCheckedTableItem(tableItem)">
+                                    {{tableItem.name}}
+                                </th>
+                                <th scope="col">序号</th>
+                                <th scope="col">商品名称</th>
+                                <th scope="col">商品单价</th>
+                                <th scope="col">购买数量</th>
+                                <th scope="col">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, index) in tableItem.productList">
+                                <th scope="col">
+                                    <input v-model="item.status" :value=item type="checkbox" name="checkboxinput"
+                                        @click="checkedchoice(item)">
+                                </th>
+                                <th scope="row">{{index+1}}</th>
+                                <td>{{item.name}}</td>
+                                <td>{{item.price}}</td>
+                                <td>
+                                    <!-- 每件商品数量最少为1，count为1时禁止点击 -->
+                                    <button @click="handleReduce(item)" :disabled="item.count===1" type="button"
+                                        class="btn btn-outline-secondary btn-sm handle-btn">-</button>
+                                    {{item.count}}
+                                    <button @click="handleAdd(item)" type="button"
+                                        class="btn btn-outline-secondary btn-sm handle-btn">+</button>
+                                </td>
+                                <td>
+                                    <button @click="handleRemove(index,tableindex)" type="button"
+                                        class="btn btn-outline-primary btn-sm">移除</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </template>
+                </table>
+
+            </template>
+            <div v-else>购物车为空</div>
+            <div class="row">
+                <div class="col-4">
+                    <input type="checkbox" @click="checkedAllselect" :ckecked="isCheckedAll()">
+                    全选
+                </div>
+                <div class="col-4">
+                    总价： ￥{{totalPrice}}
+                </div>
+                <div class="col-4">
+                    选择商品的总价格： ￥{{checkPrice}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<!-- <script src="../../vue.js"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js">
+</script>
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js">
+</script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js">
+</script>
+<script src="./index.js"></script>
+<script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+    /* 功能描述:
+        1.展示一个已加入购物车的商品列表，包含商品名称，商品单价，购买数量和操作等信息
+        2.实时显示购买的总价
+        3.购买的数量可增加或减少，每类商品最少购买一件，每类商品可以从购物车中移除
+        4.扩展商品列表，新增一项是否选中该商品的功能，总价变为只计算选中商品的总价，同时提供一个全选按钮
+        5.将商品列表list改为一个二维数组来实现商品的分类，比如分为“电子产品，“生活用品”和“果蔬”
+    */
+    /* 页面制作
+         1.判断是否有商品数据
+             因为每个商品都是可以从购物车移除的，所以当列表为空时，在页面中显示一个“购物车为空”的提示更为友好，我们可以通过判断数组list长度来实现该功能
+         2.总价totalPrice是依赖于商品列表而动态变化的，所以用计算属性来实现，并且结果转化为“千位分隔”的数字    
+    */
+</script>
+
+</html>
