@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <div id="app" v-cloak>
+    <anchor :level="5" title='特性'>特性</anchor>
+  </div>
+  <script src="../vue.js"></script>
+  <script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+
+
+    Vue.component('anchor', {
+      props: {
+        level: {
+          type: Number,
+          required: true
+        },
+        title: {
+          type: String,
+          default: ''
+        }
+      },
+      render: function (createElement) {
+        return createElement(
+          'h' + this.level,
+          [
+            createElement(
+              'a', {
+                domProps: {
+                  href: '#' + this.title
+                }
+              },
+              this.$slots.default
+            )
+          ]
+        )
+      }
+    })
+
+    var app = new Vue({
+      el: '#app',
+    })
+  </script>
+</body>
+
+</html>

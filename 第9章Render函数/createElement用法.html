@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>createElement用法</title>
+</head>
+<style>
+  .foo {
+    background: rgb(69, 68, 87);
+  }
+  .show {
+    background: red;
+  }
+</style>
+
+<body>
+
+  <div id="app" v-cloak>
+    <!-- <anchor ></anchor> -->
+    <ele1></ele1>
+    <ele2></ele2>
+    <ele3></ele3>
+    <ele4 :show="show" ></ele4>
+    <button @click="show = !show">切换</button>
+    <ele5 :list='list'></ele5>
+    <ele6 :books="books"></ele6>
+    <button @click="handleClickBookes">显示列表</button>
+    <ele7></ele7>
+    <ele8>
+        <p>slot内容</p>
+    </ele8>
+  </div>
+  <script src="../vue.js"></script>
+  <script>
+    Vue.config.devtools = false;
+    Vue.config.productionTip = false;
+    Vue.component('MyComponent', {
+      template: '<div>213</div>'
+    })
+    // 基本参数介绍
+    Vue.component('anchor', {
+      props: {
+
+      },
+      render: function (createElement) {
+        return createElement(
+          /*
+           * {String | Object | Function}
+           * 一个 Html 标签名,组件选项对象,
+           * 或者resolve了上述任何一种的一个async函数
+           * 必填项
+           */
+          'div',
+          // {Object}
+          // 一个与模板中属性对应的数据对象,可选.
+          {
+            // 与`v-vind:class`的API相同
+            // 接受一个字符串/对象或字符串和对象组成的数组
+            'class': {
+              foo: true,
+              bar: false
+            },
+            // 与 `v-bind:style` 的 API 相同，
+            // 接受一个字符串、对象，或对象组成的数组
+            style: {
+              color: 'red',
+              fontSize: '14px'
+            },
+            // 普通的HTML特性
+            attrs: {
+              id: 'foo'
+            },
+            // 组件 prop
+            props: {
+              myProp: 'bar'
+            },
+            // DOM 属性
+            domProps: {
+              innerHTML: 'baz'
+            },
+            /*
+              事件监听器在`on`属性内,
+              但不再支持如`v-on:keyup.enter`这样的修饰器
+              需要在处理函数中手动检查keyCode
+            */
+            on: {
+              click: this.clickHandler
+            },
+            /*
+               仅用于组件,用于监听原生事件,而不是组件内部使用
+               `vm.$emit`触发的事件
+            */
+            nativeOn: {
+              click: this.nativeClickHandler
+            },
+            // 自定义指令。注意，你无法对 `binding` 中的 `oldValue`
+            // 赋值，因为 Vue 已经自动为你进行了同步。
+            directives: [
+              {
+                name: 'my-custom-directive',
+                value: '2',
+                expression: '1 + 1',
+                arg: 'foo',
+                modifiers: {
+                  bar: true
+                }
+              }
+            ],
+            // 作用域插槽的格式为
+            // { name: props => VNode | Array<VNode> }
+            scopedSlots: {
+              default: props => createElement('span', props.text)
+            },
+            // 如果组件是其它组件的子组件，需为插槽指定名称
+            slot: 'name-of-slot',
+            // 其它特殊顶层属性
+            key: 'myKey',
+            ref: 'myRef',
+            // 如果你在渲染函数中给多个元素都应用了相同的 ref 名，
+            // 那么 `$refs.myRef` 会变成一个数组。
+            refInFor: true
+          },
+          /*
+           * {Sting | Array}
+           * 子级虚拟节点(VNodes),由`createElement()`构建而成,
+           * 也可以使用字符串来生成"文本虚拟节点",
+           * 可选
+           */
+          [
+            '先写一些文字',
+            createElement('h1', '一条规则'),
+            createElement('MyComponent', {
+              props: {
+                someProp: 'foobar'
+              }
+            })
+          ]
+        )
+      },
+      methods: {
+        clickHandler() {
+          console.log('点击了方法');
+        },
+        nativeClickHandler() {}
+      },
+    })
+    // 传统template写法和Render写法对比
+    Vue.component('ele1',{
+      template: '<div id="element" \
+      :class="{show:show}" \
+      @click="handleClick">文本内容</div>',
+      data: function() {
+        return {
+          show: true
+        }
+      },
+      methods: {
+        handleClick() {
+          console.log('123');
+        }
+      },
+    })
+    Vue.component('ele2', {
+      render: function (createElement) {
+        return createElement(
+          'div',
+          {
+            class: {
+              'show':this.show
+            },
+            style: {
+              marginTop: '10px'
+            },
+            attrs: {
+              id: 'element2'
+            },
+            on: {
+              click: this.handleClick
+            }
+          },
+          '文本内容'
+        )
+      },
+      data: function() {
+        return {
+          show: true
+        }
+      },
+      methods: {
+        handleClick() {
+          console.log('adfdsaf');
+          
+        }
+      },
+    })
+    // 重复渲染多个组件或元素
+    var Child = {
+      render: function (createElement) {
+        return createElement('p','test')
+      }
+    }
+    Vue.component('ele3',{
+      render(createElement) {
+        return createElement('div',
+          Array.apply(null, {
+            length: 5
+          }).map(function () {
+            return createElement(Child)
+          })
+        )
+      }
+    })
+    // 使用javascript代替模板功能
+      // v-if
+    Vue.component('ele4',{
+      render: function (createElement) {
+        if(this.show) {
+          return createElement('p','show的值为true')
+        }else {
+          return createElement('p','show的值为false')
+        }
+      },
+      props: {
+        show: {
+          type: Boolean,
+          default: false
+        },
+      }
+    })
+      // v-for
+    Vue.component('ele5',{
+      render: function (createElement) {
+        let nodes = [];
+        for (let i=0;i<this.list.length;i++) {
+          nodes.push(createElement('span', this.list[i]))
+        }
+        return createElement('div',nodes)
+      },
+      props: {
+        list: {
+          type: Array,
+        }
+      }
+    })
+      // 渲染列表 if,eles,数组map
+    Vue.component('ele6',{
+      render: function (createElement) {
+        if(this.books.length) {
+          return createElement('ul',this.books.map(item => {
+            return createElement('li',item)
+          }))
+        }else {
+          return createElement('p','列表内容为空')
+        }
+      },
+      props: {
+        books: {
+          type: Array,
+        }
+      }
+    }) 
+      // v-model
+    Vue.component('ele7',{
+      render(create) {
+        let _this = this
+        return create('div',[
+          create('input',{
+            domProps: {
+              value: this.value
+            },
+            on: {
+              input(event) {
+                _this.value = event.target.value
+              }
+            }
+          }),
+          create('p','value:'+ this.value)
+        ])
+      },
+      data() {
+        return {
+          value: ''
+        }
+      }
+    })
+      // slot
+    Vue.component('ele8', {
+      render(createElement) {
+        if(this.$slots.default === undefined) {
+          return createElement('div','没有使用slot时显示的文本')
+        }else {
+          return createElement('div',this.$slots.default)
+        }
+      }
+    })
+    var app = new Vue({
+      el: '#app',
+      data: {
+        show: false,
+        list: ['《vue实战》','《javascript》','《css解密》'],
+        books: []
+      },
+      methods: {
+        handleClickBookes() {
+          this.books =  ['《vue实战》','《javascript》','《css解密》']
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
